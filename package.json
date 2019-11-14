@@ -1,0 +1,27 @@
+{
+	"name": "@netatwork/check-npm-dependencies",
+	"description": "A linter for bundled npm dependencies",
+	"bin": {
+		"naw-check-npm-dependencies": "./dist/cli.js"
+	},
+	"scripts": {
+		"start": "tsc -w",
+		"compile": "tsc"
+	},
+	"dependencies": {
+		"@types/semver": "^6.2.0",
+		"ansi-colors": "^4.1.1",
+		"command-line-args": "^5.1.1",
+		"fs-extra": "^8.1.0",
+		"ignore": "^5.1.4",
+		"semver": "^6.3.0"
+	},
+	"devDependencies": {
+		"@types/command-line-args": "^5.0.0",
+		"@types/fs-extra": "^8.0.1",
+		"@types/node": "^12.12.7",
+		"typescript": "^3.7.2"
+	},
+	"author": "Net at Work GmbH",
+	"license": "Apache-2.0"
+}
