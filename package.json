@@ -1,6 +1,7 @@
 {
 	"name": "@netatwork/check-npm-dependencies",
 	"description": "A linter for bundled npm dependencies",
+	"version": "1.0.0",
 	"bin": {
 		"naw-check-npm-dependencies": "./dist/cli.js"
 	},
