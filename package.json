@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"start": "tsc -w",
-		"compile": "tsc"
+		"compile": "rimraf ./dist && tsc"
 	},
 	"dependencies": {
 		"@types/semver": "^6.2.0",
@@ -21,6 +21,7 @@
 		"@types/command-line-args": "^5.0.0",
 		"@types/fs-extra": "^8.0.1",
 		"@types/node": "^12.12.7",
+		"rimraf": "^3.0.0",
 		"typescript": "^3.7.2"
 	},
 	"author": "Net at Work GmbH",
