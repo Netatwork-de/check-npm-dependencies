@@ -46,13 +46,15 @@ export class VersionMap {
 }
 
 function normalizeVersion(version: string) {
-	const simple = parse(version);
-	if (simple) {
-		return simple.version;
-	}
-	const min = minVersion(version);
-	if (min) {
-		return min.version;
-	}
+	try {
+		const simple = parse(version);
+		if (simple) {
+			return simple.version;
+		}
+		const min = minVersion(version);
+		if (min) {
+			return min.version;
+		}
+	} catch {}
 	return version;
 }
