@@ -1,4 +1,4 @@
-import { CheckConfig } from "./check";
+import type { CheckConfig } from "./check";
 
 export interface PackageLock {
 	readonly dependencies?: PackageLockDependencies;

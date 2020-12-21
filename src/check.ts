@@ -1,5 +1,5 @@
-import { PackageLock, Package, PackageLockDependencies } from "./package-types";
-import createMatcher from"ignore";
+import createMatcher from "ignore";
+import type { PackageLock, Package, PackageLockDependencies } from "./package-types";
 import { VersionMap, Versions } from "./version-map";
 
 export async function check(packageInfo: Package, packageLock: PackageLock,  config: CheckConfig) {

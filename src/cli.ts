@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-import parseArgv = require("command-line-args");
+import type { Package, PackageLock } from "./package-types";
+import parseArgv from "command-line-args";
 import { resolve, join } from "path";
-import { readJson } from "fs-extra";
-import { Package, PackageLock } from "./package-types";
+import { readFile } from "fs/promises";
 import { check } from "./check";
-import colors = require("ansi-colors");
+import colors from "ansi-colors";
 
 (async () => {
 	const args = parseArgv([{ name: "context" }]);
 	const context = resolve(args.context || ".");
 
-	const packageInfo = await readJson(join(context, "package.json")) as Package;
-	const packageLock = await readJson(join(context, "package-lock.json")) as PackageLock;
+	const packageInfo = await readFile(join(context, "package.json"), "utf-8").then(JSON.parse) as Package;
+	const packageLock = await readFile(join(context, "package-lock.json"), "utf-8").then(JSON.parse) as PackageLock;
 
 	const configs = getConfigs(packageInfo);
 	if (configs.length === 0) {
