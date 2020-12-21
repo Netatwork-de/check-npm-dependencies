@@ -11,7 +11,8 @@
 	"scripts": {
 		"clean": "rimraf ./dist/**/*",
 		"start": "npm run clean && tsc -w",
-		"build": "npm run clean && tsc"
+		"build": "npm run clean && tsc",
+		"prepack": "npm run build"
 	},
 	"dependencies": {
 		"ansi-colors": "^4.1.1",
