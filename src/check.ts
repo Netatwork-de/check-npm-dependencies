@@ -1,17 +1,14 @@
-import createMatcher from "ignore";
-import type { PackageLock, Package, PackageLockDependencies } from "./package-types";
-import { VersionMap, Versions } from "./version-map";
+import type { Config } from "./config";
+import type { PackageLock, Package, PackageLockDependencies } from "./common/package-types";
+import { createPackageNameMatcher } from "./common/patterns";
+import { VersionMap, Versions } from "./common/version-map";
 
-export async function check(packageInfo: Package, packageLock: PackageLock,  config: CheckConfig) {
-	const matcher = createMatcher({ ignorecase: true });
-	if (config.patterns) {
-		for (const pattern of config.patterns) {
-			matcher.add(pattern);
-		}
-	} else {
-		matcher.add("*");
+export function check(packageInfo: Package, packageLock: PackageLock, config: Config) {
+	if (!packageLock.dependencies) {
+		throw new Error("packageLock contains no dependency information");
 	}
 
+	const matcher = createPackageNameMatcher(config.patterns);
 	const packages = new VersionMap();
 	const requires = new VersionMap();
 
@@ -41,33 +38,24 @@ export async function check(packageInfo: Package, packageLock: PackageLock,  con
 				}
 			}
 		}
-	})(packageLock.dependencies || {}, []);
+	})(packageLock.dependencies, []);
 
 	const errors: CheckError[] = [];
-	if (!config.rules || config.rules["no-duplicates"]) {
+	if (!config.rules || config.rules.noDuplicates) {
 		for (const [name, versions] of packages) {
-			if (matcher.ignores(name) && VersionMap.hasMultiplePaths(versions)) {
+			if (matcher(name) && VersionMap.hasMultiplePaths(versions)) {
 				errors.push({ type: "duplicate", name, versions });
 			}
 		}
 	}
-	if (!config.rules || config.rules["no-missmatch"]) {
+	if (!config.rules || config.rules.noMissmatch) {
 		for (const [name, versions] of requires) {
-			if (matcher.ignores(name) && versions.size > 1) {
+			if (matcher(name) && versions.size > 1) {
 				errors.push({ type: "missmatch", name, versions });
 			}
 		}
 	}
 	return errors;
-}
-
-export interface CheckConfig {
-	readonly dev?: boolean;
-	readonly patterns?: string[];
-	readonly rules?: {
-		["no-duplicates"]?: boolean;
-		["no-missmatch"]?: boolean;
-	};
 }
 
 export type CheckError = {

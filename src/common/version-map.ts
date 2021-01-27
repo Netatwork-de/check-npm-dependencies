@@ -1,4 +1,4 @@
-import { minVersion, parse } from "semver";
+import { normalizeVersion } from "./version";
 
 export type Versions = Map<string, {
 	readonly paths: string[][];
@@ -43,18 +43,4 @@ export class VersionMap {
 		}
 		return false;
 	}
-}
-
-function normalizeVersion(version: string) {
-	try {
-		const simple = parse(version);
-		if (simple) {
-			return simple.version;
-		}
-		const min = minVersion(version);
-		if (min) {
-			return min.version;
-		}
-	} catch {}
-	return version;
 }
