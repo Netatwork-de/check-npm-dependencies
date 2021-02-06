@@ -104,6 +104,17 @@ export function fixDuplicates(packageInfo: Package, packageLock: PackageLock, co
 										rootVersion
 									});
 								} else {
+									if (packageLock.lockfileVersion === 2) {
+										(function removePackage(dependency: PackageLockDependency, path: string[]) {
+											if (dependency.dependencies) {
+												for (const name in dependency.dependencies) {
+													removePackage(dependency.dependencies[name], path.concat(name));
+												}
+											}
+											delete packageLock.packages[path.map(name => `node_modules/${name}`).join("/")];
+										})(dependency.dependencies[name], path.concat(name));
+									}
+
 									delete dependency.dependencies[name];
 									removed = true;
 									modified = true;
