@@ -1,11 +1,7 @@
-
-export interface Config {
-	noDuplicates?: string[];
-	sameVersions?: (string | string[])[];
-}
+import { ConfigJson } from "./config.js";
 
 export interface PackageJson {
-	nawCheckNpmDependencies?: Config;
+	nawCheckNpmDependencies?: ConfigJson | string;
 }
 
 export interface PackageLockJsonV3 {

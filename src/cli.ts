@@ -1,9 +1,10 @@
 #!/usr/bin/env node
+import color from "ansi-colors";
+import createMatcher from "ignore";
 import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import parseArgs from "yargs-parser";
-import createMatcher from "ignore";
-import color from "ansi-colors";
+import { getConfig } from "./config.js";
 import { PackageJson, PackageLockJsonV3 } from "./types.js";
 
 const args = parseArgs(process.argv.slice(2), {
@@ -17,10 +18,12 @@ const context = resolve(args.context ?? ".");
 
 const packageFilename = join(context, "package.json");
 const packageInfo: PackageJson = JSON.parse(await readFile(packageFilename, "utf-8"));
-const config = packageInfo.nawCheckNpmDependencies;
-if (!config) {
+const configJson = packageInfo.nawCheckNpmDependencies;
+if (!configJson) {
 	throw new Error("\"nawCheckNpmDependencies\" field is missing package.json");
 }
+
+const config = await getConfig(context, configJson);
 
 const packageLockFilename = join(context, "package-lock.json");
 const packageLock: PackageLockJsonV3 = JSON.parse(await readFile(packageLockFilename, "utf8"));
@@ -67,7 +70,7 @@ for (const path in packageLock.packages) {
 	});
 }
 
-if (config.noDuplicates) {
+if (config.noDuplicates.length > 0) {
 	const matcher = createMatcher({ ignoreCase: false });
 	matcher.add(config.noDuplicates);
 	for (const [name, group] of groupsByName) {
@@ -84,7 +87,7 @@ if (config.noDuplicates) {
 	}
 }
 
-if (config.sameVersions) {
+if (config.sameVersions.length > 0) {
 	for (const pattern of config.sameVersions) {
 		const matcher = createMatcher({ ignoreCase: false });
 		matcher.add(Array.isArray(pattern) ? pattern : [pattern]);
