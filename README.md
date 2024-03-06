@@ -1,5 +1,5 @@
 # @netatwork/check-npm-dependencies
-A linter for bundled npm dependencies
+A linter for package locks.
 
 ## Installation
 ```bash
@@ -7,48 +7,44 @@ npm i -D @netatwork/check-npm-dependencies
 ```
 
 ## Configuration
-```json5
+```js
 // package.json
 {
-	"nawCheckNpmDependencies": {
-		"dev": false,
-		"patterns": [
-			"*"
-		],
-		"rules": {
-			"noDuplicates": true,
-			"noMissmatch": true
-		}
-	}
+  ...
+  "nawCheckNpmDependencies": {
+    "extends": "./some-shared-config.json",
+    "noDuplicates": [
+      "@example/*"
+    ],
+    "sameVersions": [
+      "@example/*",
+      [
+        "example-a-*",
+        "example-b"
+      ]
+    ]
+  }
 }
 ```
-+ nawCheckNpmDependencies `<Config>` - Can be one of the following:
-	+ `<Config[]>` - An array of configuration objects.
-	+ `<string>` - A filename of a json(5) file to load the config from.
-	+ `<object>` - An object with the following properties:
-		+ extends `<string>` - Optional. A filename of a json(5) file to load and use as fallback for unspecified properties.
-		+ dev `<boolean>` - Optional. True, to also check dev dependencies. Default is `false`.
-		+ patterns `<string[]>` - Optional. An array of gitignore like patterns to include packages. If not specified, all packages are checked.
-		+ rules `<object>` - Optional. An object with rules to use. If not specified, all rules are used.
-			+ `noDuplicates` - Assert that no package is installed on multiple paths.
-			+ `noMissmatch` - Assert that only one version is required.
++ **nawCheckNpmDependencies** `<Config>` - Can be a path to load the config from or an object with the following options:
+  + **extends** `<string>` - A path to load a config from to extend.
+  + **noDuplicates** `<string[]>` - An array of package name patterns to check for duplicates.
+    + In the example above, all packages within the `@example` scope are checked for duplicates.
+  + **sameVersions** `<(string | string[])[]>` - An array of patterns or pattern groups to ensure that all packages within a group have the same versions.
+    + In the example above, all packages within the `@example` scope are checked for the same version and `example-a-*` and `example-b` are checked for the same version.
 
 ## Usage
-Run from a script:
 ```bash
-npx naw-check-npm-dependencies
+# Run via npx:
+npx naw-check-npm-dependencies [...args]
 ```
-Or add a script to your `package.json`
-```json5
+```js
+// Or add to your package.json:
 {
-	"scripts": {
-		"test": "naw-check-npm-dependencies && ..."
-	}
+  "scripts": {
+    "test": "naw-check-npm-dependencies ..."
+  }
 }
 ```
 
-Some issues can be resolved automatically:<br>
-If `--fix-duplicates` is specified, the cli will attempt to remove duplicate package installations and then perform a clean install:
-```bash
-npx naw-check-npm-dependencies --fix-duplicates
-```
++ `--context | -c <path>` - The path at which to look for a `package.json` and `package-lock.json`.
